@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: cart-service
+  profiles:
+    active: production
+
+info:
+  app:
+    name: "e-commerce/cart-service"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
