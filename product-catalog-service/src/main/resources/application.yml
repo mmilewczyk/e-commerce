@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: product-catalog-service
+  profiles:
+    active: production
+
+info:
+  app:
+    name: "e-commerce/product-catalog-service"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
