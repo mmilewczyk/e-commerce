@@ -1,6 +1,7 @@
 package com.milewczyk.productinfoservice.controller;
 
 import com.milewczyk.productinfoservice.model.Product;
+import com.milewczyk.productinfoservice.model.dto.ProductDTO;
 import com.milewczyk.productinfoservice.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class ProductWebController {
     private final ProductService productService;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("productId") Long productId) {
         return status(HttpStatus.OK).body(productService.getProductById(productId));
     }
 
