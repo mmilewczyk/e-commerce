@@ -2,6 +2,8 @@ package com.milewczyk.productinfoservice.service;
 
 import com.milewczyk.productinfoservice.model.CatalogProduct;
 import com.milewczyk.productinfoservice.model.Product;
+import com.milewczyk.productinfoservice.model.dto.ProductDTO;
+import com.milewczyk.productinfoservice.model.mapper.ProductMapper;
 import com.milewczyk.productinfoservice.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +18,16 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final RestTemplate restTemplate;
+    private final ProductMapper productMapper;
 
     private static final String PRODUCT_CATALOG_SERVICE_URL = "http://product-catalog-service/api/admin/products";
 
     @Transactional(readOnly = true)
-    public Product getProductById(Long productId) {
-        return productRepository.findProductById(productId);
+    public ProductDTO getProductById(Long productId) {
+        var product = productRepository.findProductById(productId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Product cannot be found, the specified id does not exist"));
+        return productMapper.mapProductToDTO(product);
     }
 
     @Transactional
