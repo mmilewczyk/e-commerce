@@ -2,11 +2,13 @@ package com.milewczyk.productinfoservice.model.dto;
 
 import com.milewczyk.productinfoservice.model.Category;
 import com.milewczyk.productinfoservice.model.Price;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class ProductDTO {
     private Long id;
     private String name;
