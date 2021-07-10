@@ -17,17 +17,26 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final RestTemplate restTemplate;
 
-    @Transactional
+    private static final String PRODUCT_CATALOG_SERVICE_URL = "http://product-catalog-service/api/admin/products";
+
+    @Transactional(readOnly = true)
     public Product getProductById(Long productId) {
         return productRepository.findProductById(productId);
     }
 
+    @Transactional
     public Product addNewProduct(Product product){
-        var catalogProduct = new CatalogProduct(product.getId(), product.getName(), product.getBrandName());
-        restTemplate.postForObject("http://product-catalog-service/api/admin/products", catalogProduct, CatalogProduct.class);
+        postProductToProductCatalogService(PRODUCT_CATALOG_SERVICE_URL, product);
         return productRepository.save(product);
     }
 
+    @Transactional
+    public void postProductToProductCatalogService(String url, Product product){
+        var catalogProduct = new CatalogProduct(product.getId(), product.getName(), product.getBrandName());
+        restTemplate.postForObject(url, catalogProduct, CatalogProduct.class);
+    }
+
+    @Transactional
     public Product updateProduct(Product product){
         var editedProduct = productRepository.findById(product.getId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product cannot be found"));
@@ -40,6 +49,7 @@ public class ProductService {
         return editedProduct;
     }
 
+    @Transactional
     public void deleteProductById(Long productId) {
         productRepository.deleteById(productId);
     }
