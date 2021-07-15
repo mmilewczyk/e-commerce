@@ -1,6 +1,6 @@
 package com.milewczyk.productcatalogservice.repository;
 
-import com.milewczyk.productcatalogservice.model.Product;
+import com.milewczyk.productcatalogservice.model.CatalogProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface CatalogProductRepository extends JpaRepository<CatalogProduct, Long> {
 
     @Transactional
     @EntityGraph(attributePaths = {"price", "categories"})
-    Page<Product> findProductsByBrandNameContainingIgnoreCase(String brandName, Pageable pageable);
+    Page<CatalogProduct> findProductsByBrandNameContainingIgnoreCase(String brandName, Pageable pageable);
 
     @Transactional
     @EntityGraph(attributePaths = {"price", "categories"})
-    Page<Product> findProductsByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<CatalogProduct> findProductsByNameContainingIgnoreCase(String name, Pageable pageable);
 }
