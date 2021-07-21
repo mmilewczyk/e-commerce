@@ -1,7 +1,7 @@
 package com.milewczyk.productcatalogservice.controller;
 
-import com.milewczyk.productcatalogservice.model.Product;
-import com.milewczyk.productcatalogservice.service.ProductService;
+import com.milewczyk.productcatalogservice.model.CatalogProduct;
+import com.milewczyk.productcatalogservice.service.CatalogProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,24 +15,24 @@ import static org.springframework.http.ResponseEntity.status;
 @RequestMapping(produces = "application/json", path = "api/admin/products")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
-public class ProductAdminController {
+public class CatalogProductAdminController {
 
-    private final ProductService productService;
+    private final CatalogProductService catalogProductService;
 
     @GetMapping
-    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
-        return status(HttpStatus.OK).body(productService.getAllProducts(pageable));
+    public ResponseEntity<Page<CatalogProduct>> getAllProducts(Pageable pageable) {
+        return status(HttpStatus.OK).body(catalogProductService.getAllProducts(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<Product> addNewProduct(@RequestBody Product product) {
-        return status(HttpStatus.CREATED).body(productService.addNewProducts(product));
+    public ResponseEntity<CatalogProduct> addNewProduct(@RequestBody CatalogProduct catalogProduct) {
+        return status(HttpStatus.CREATED).body(catalogProductService.addNewProducts(catalogProduct));
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProductById(@PathVariable Long productId) {
         try {
-            productService.deleteProductById(productId);
+            catalogProductService.deleteProductById(productId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
