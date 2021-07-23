@@ -3,10 +3,13 @@ package com.milewczyk.productcatalogservice.service;
 import com.milewczyk.productcatalogservice.model.CatalogProduct;
 import com.milewczyk.productcatalogservice.model.Price;
 import com.milewczyk.productcatalogservice.model.Product;
+import com.milewczyk.productcatalogservice.model.dto.CatalogProductDTO;
+import com.milewczyk.productcatalogservice.model.mapper.CatalogProductMapper;
 import com.milewczyk.productcatalogservice.repository.CatalogProductRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -24,9 +29,13 @@ public class CatalogProductService {
 
     private final CatalogProductRepository catalogProductRepository;
     private final RestTemplate restTemplate;
+    private final CatalogProductMapper catalogProductMapper;
 
-    public Page<CatalogProduct> getAllProducts(Pageable pageable) {
-        return catalogProductRepository.findAll(pageable);
+    public Page<CatalogProductDTO> getAllProducts(Pageable pageable) {
+        List<CatalogProductDTO> catalogProducts = catalogProductRepository.findAll(pageable).stream()
+                .map(catalogProductMapper::mapCatalogProductToDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(catalogProducts);
     }
 
     @HystrixCommand(fallbackMethod = "getFallbackCatalogProductById")
