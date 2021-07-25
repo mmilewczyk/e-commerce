@@ -1,6 +1,7 @@
 package com.milewczyk.productcatalogservice.controller;
 
 import com.milewczyk.productcatalogservice.model.CatalogProduct;
+import com.milewczyk.productcatalogservice.model.dto.CatalogProductDTO;
 import com.milewczyk.productcatalogservice.service.CatalogProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,7 @@ public class CatalogProductAdminController {
     private final CatalogProductService catalogProductService;
 
     @GetMapping
-    public ResponseEntity<Page<CatalogProduct>> getAllProducts(Pageable pageable) {
+    public ResponseEntity<Page<CatalogProductDTO>> getAllProducts(Pageable pageable) {
         return status(HttpStatus.OK).body(catalogProductService.getAllProducts(pageable));
     }
 
