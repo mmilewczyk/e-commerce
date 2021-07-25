@@ -33,12 +33,12 @@ public class CatalogProductWebController {
     }
 
     @GetMapping("/search-by-brand")
-    public ResponseEntity<Page<CatalogProduct>> getAllProductsByBrandName(@RequestParam("brand") String brandName, Pageable pageable) {
+    public ResponseEntity<Page<CatalogProductDTO>> getAllProductsByBrandName(@RequestParam("brand") String brandName, Pageable pageable) {
         return status(HttpStatus.OK).body(catalogProductService.getAllProductsByBrand(brandName, pageable));
     }
 
     @GetMapping("/search-by-name")
-    public ResponseEntity<Page<CatalogProduct>> getAllProductsByName(@RequestParam("name") String name, Pageable pageable) {
+    public ResponseEntity<Page<CatalogProductDTO>> getAllProductsByName(@RequestParam("name") String name, Pageable pageable) {
         return status(HttpStatus.OK).body(catalogProductService.getAllProductsByName(name, pageable));
     }
 }
