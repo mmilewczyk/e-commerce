@@ -1,8 +1,10 @@
 package com.milewczyk.productcatalogservice.model.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CatalogProductDTO {
     private Long id;
     private String name;
