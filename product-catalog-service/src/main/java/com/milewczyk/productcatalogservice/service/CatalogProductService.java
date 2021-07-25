@@ -50,12 +50,18 @@ public class CatalogProductService {
                 .orElseGet(() -> status(HttpStatus.NOT_FOUND).body(new Product()));
     }
 
-    public Page<CatalogProduct> getAllProductsByBrand(String brandName, Pageable pageable) {
-        return catalogProductRepository.findProductsByBrandNameContainingIgnoreCase(brandName, pageable);
+    public Page<CatalogProductDTO> getAllProductsByBrand(String brandName, Pageable pageable) {
+        List<CatalogProductDTO> catalogProducts = catalogProductRepository.findCatalogProductsByBrandNameContainingIgnoreCase(brandName, pageable).stream()
+                .map(catalogProductMapper::mapCatalogProductToDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(catalogProducts);
     }
 
-    public Page<CatalogProduct> getAllProductsByName(String name, Pageable pageable) {
-        return catalogProductRepository.findProductsByNameContainingIgnoreCase(name, pageable);
+    public Page<CatalogProductDTO> getAllProductsByName(String name, Pageable pageable) {
+        List<CatalogProductDTO> catalogProducts = catalogProductRepository.findCatalogProductsByNameContainingIgnoreCase(name, pageable).stream()
+                .map(catalogProductMapper::mapCatalogProductToDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(catalogProducts);
     }
 
     public CatalogProduct addNewProducts(CatalogProduct product) {
