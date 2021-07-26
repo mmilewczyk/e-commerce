@@ -2,7 +2,7 @@
 An e-commerce application that allows you to sell clothes and shoes. The project was designed as a microservice application.
 More information coming soon.
 
-### Technologies:
+## Technologies:
 - Java 11
 - Spring (Boot, Web, Data, Security, Actuator, Cloud)
 - Netflix Eureka Discovery
@@ -11,3 +11,5 @@ More information coming soon.
 - MongoDB
 - Lombok
 - MapStruct
+ ## Configuration files
+ https://github.com/agiklo/ecommerce-config
