@@ -1,5 +1,5 @@
 # 🛒E-commerce microservices
-An e-commerce application selling clothes and shoes. The project was designed as a microservice application.
+An e-commerce application that allows you to sell clothes and shoes. The project was designed as a microservice application.
 More information coming soon.
 
 ### Technologies:
