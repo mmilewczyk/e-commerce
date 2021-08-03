@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: production
+
+info:
+  app:
+    name: "e-commerce/user-service"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: health,info,beans,conditions
