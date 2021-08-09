@@ -18,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
 
@@ -37,9 +38,21 @@ public class User {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, String password) {
+    @NotBlank
+    private GENDER gender;
+
+    @NotBlank
+    private Address address;
+
+    @NotBlank
+    private String cartId;
+
+    public User(String username, String email, String password, Set<Role> roles, GENDER gender, Address address) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.roles = roles;
+        this.gender = gender;
+        this.address = address;
     }
 }
