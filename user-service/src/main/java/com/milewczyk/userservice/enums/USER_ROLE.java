@@ -1,4 +1,4 @@
-package com.milewczyk.userservice.model;
+package com.milewczyk.userservice.enums;
 
 public enum USER_ROLE {
     ROLE_USER,
