@@ -1,6 +1,5 @@
-package com.milewczyk.userservice.security;
+package com.milewczyk.userservice.model;
 
-import com.milewczyk.userservice.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

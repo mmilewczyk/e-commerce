@@ -1,7 +1,8 @@
-package com.milewczyk.userservice.security;
+package com.milewczyk.userservice.service;
 
 import com.milewczyk.userservice.model.User;
 import com.milewczyk.userservice.repository.UserRepository;
+import com.milewczyk.userservice.model.MyUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

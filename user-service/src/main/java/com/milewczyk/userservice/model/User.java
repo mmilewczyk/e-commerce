@@ -1,17 +1,21 @@
 package com.milewczyk.userservice.model;
 
+import com.milewczyk.userservice.enums.GENDER;
+import com.milewczyk.userservice.enums.USER_ROLE;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,14 +33,16 @@ public class User {
     @NotBlank
     @Size(max = 50)
     @Email
+    @Indexed(unique = true)
     private String email;
 
     @NotBlank
     @Size(max = 120)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @DBRef
-    private Set<Role> roles = new HashSet<>();
+    private List<USER_ROLE> role;
 
     @NotBlank
     private GENDER gender;
@@ -47,12 +53,15 @@ public class User {
     @NotBlank
     private String cartId;
 
-    public User(String username, String email, String password, Set<Role> roles, GENDER gender, Address address) {
+    private boolean isActive;
+
+    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, String cartId) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
         this.gender = gender;
         this.address = address;
+        this.cartId = cartId;
     }
 }
