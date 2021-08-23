@@ -1,4 +1,4 @@
-package com.milewczyk.cartservice.model.modelsFromOtherServices;
+package com.milewczyk.cartservice.model.models_from_other_services.productinfoservice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

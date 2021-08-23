@@ -2,8 +2,8 @@ package com.milewczyk.cartservice.service;
 
 import com.milewczyk.cartservice.model.Cart;
 import com.milewczyk.cartservice.model.CartItem;
-import com.milewczyk.cartservice.model.modelsFromOtherServices.Product;
-import com.milewczyk.cartservice.model.modelsFromOtherServices.userservice.User;
+import com.milewczyk.cartservice.model.models_from_other_services.productinfoservice.Product;
+import com.milewczyk.cartservice.model.models_from_other_services.userservice.User;
 import com.milewczyk.cartservice.repository.CartItemRepository;
 import com.milewczyk.cartservice.repository.CartRepository;
 import lombok.AllArgsConstructor;
