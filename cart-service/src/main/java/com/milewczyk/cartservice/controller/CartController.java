@@ -16,19 +16,19 @@ public class CartController {
 
     private final CartService cartService;
 
-    @GetMapping("/cart/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable("userId") Long userId){
-        return status(HttpStatus.OK).body(cartService.getCartByUserId(userId));
+    @GetMapping("/cart")
+    public ResponseEntity<Cart> getPrincipalCart(){
+        return status(HttpStatus.OK).body(cartService.getCart());
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<Cart> addItemToCart(@PathVariable("userId") Long userId, @RequestBody CartItem cartItem) {
-        return status(HttpStatus.CREATED).body(cartService.addItemToCart(userId, cartItem));
+    @PostMapping("/")
+    public ResponseEntity<Cart> addItemToCart(@RequestBody CartItem cartItem) {
+        return status(HttpStatus.CREATED).body(cartService.addItemToCart(cartItem));
     }
 
-    @DeleteMapping("/{userId}/{itemId}")
+    @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeItemFromCart(@PathVariable Long itemId, @PathVariable Long userId) {
-        cartService.removeItemFromCart(itemId, userId);
+    public void removeItemFromCart(@PathVariable Long itemId) {
+        cartService.removeItemFromCart(itemId);
     }
 }

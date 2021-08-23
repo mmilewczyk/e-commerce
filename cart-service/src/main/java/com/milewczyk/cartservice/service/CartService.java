@@ -3,6 +3,7 @@ package com.milewczyk.cartservice.service;
 import com.milewczyk.cartservice.model.Cart;
 import com.milewczyk.cartservice.model.CartItem;
 import com.milewczyk.cartservice.model.modelsFromOtherServices.Product;
+import com.milewczyk.cartservice.model.modelsFromOtherServices.userservice.User;
 import com.milewczyk.cartservice.repository.CartItemRepository;
 import com.milewczyk.cartservice.repository.CartRepository;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 @Service
 @AllArgsConstructor
@@ -19,17 +21,16 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final RestTemplate restTemplate;
+    private final Principal principal;
 
     @Transactional
-    public Cart getCartByUserId(Long userId){
-        var cart = cartRepository.findByuserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User does not exist!"));
+    public Cart getCart() {
+        var cart = getCartOfPrincepal();
         mapCartItemsToGetInfo(cart);
         return cart;
     }
 
-    @Transactional
-    public void mapCartItemsToGetInfo(Cart cart) {
+    private void mapCartItemsToGetInfo(Cart cart) {
         for (CartItem item: cart.getCartItems()) {
             var product = restTemplate.getForEntity(
                     "http://product-info-service/api/web/products/" + item.getProductId(),
@@ -44,9 +45,8 @@ public class CartService {
         }
     }
 
-    public Cart addItemToCart(Long userId, CartItem cartItem) {
-        var cart = cartRepository.findByuserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("User does not exist!"));
+    public Cart addItemToCart(CartItem cartItem) {
+        var cart = getCartOfPrincepal();
 
         if (cart.getCartItems().contains(cartItem)) {
             cartItem.setAmountOfProduct(cartItem.getAmountOfProduct() + 1);
@@ -56,9 +56,8 @@ public class CartService {
         return cart;
     }
 
-    public void removeItemFromCart(Long itemId, Long userId){
-        var cart = cartRepository.findByuserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("User does not exist!"));
+    public void removeItemFromCart(Long itemId){
+        var cart = getCartOfPrincepal();
         CartItem itemToRemove = cartItemRepository.findById(itemId).orElseThrow(
                 () -> new IllegalArgumentException("Product does not exist!"));
 
@@ -67,5 +66,16 @@ public class CartService {
         } else {
             cart.getCartItems().remove(itemToRemove);
         }
+    }
+
+    private Cart getCartOfPrincepal() {
+        var user = getUserFromUserService();
+        assert user != null;
+        return cartRepository.findByUserId(user.getId()).orElseThrow(
+                () -> new IllegalArgumentException("User does not exist!"));
+    }
+
+    private User getUserFromUserService() {
+        return restTemplate.getForObject("http://user-service/" + principal.getName(), User.class);
     }
 }
