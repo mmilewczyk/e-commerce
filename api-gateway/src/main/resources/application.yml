@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: api-gateway
+  profiles:
+    active: production
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+
+info:
+  app:
+    name: "e-commerce/api-gateway"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
