@@ -17,3 +17,8 @@ management:
     web:
       exposure:
         include: "*"
+
+security:
+  oauth2:
+    resource:
+        userInfoUri: http://localhost:8082/auth/user
