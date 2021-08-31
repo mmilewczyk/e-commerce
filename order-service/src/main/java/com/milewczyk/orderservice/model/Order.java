@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = "ORDERS")
 public class Order {
 
     @Id
