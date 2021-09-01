@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Mateusz Milewczyk, github: agiklo
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(name = "/shipments")
@@ -27,12 +30,12 @@ public class ShipmentController {
         return ResponseEntity.status(HttpStatus.OK).body(shipmentService.getShipmentByName(name));
     }
 
-    @PostMapping
+    @PostMapping("/management")
     public ResponseEntity<ShipmentDTO> addNewShipment(@RequestBody Shipment shipment) {
         return ResponseEntity.status(HttpStatus.CREATED).body(shipmentService.addNewShipment(shipment));
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/management/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteShipmentById(@RequestParam Long id) {
         shipmentService.deleteShipmentById(id);
