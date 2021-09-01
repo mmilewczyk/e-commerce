@@ -6,7 +6,25 @@ eureka:
     register-with-eureka: false
 
 spring:
+  application:
+    name: discovery-service
+    profiles:
+      active: production
   cloud:
     config:
       import-check:
         enabled: false
+
+info:
+  app:
+    name: "e-commerce/discovery-service"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
