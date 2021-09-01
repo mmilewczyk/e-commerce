@@ -20,7 +20,7 @@ public class ProductService {
     private final RestTemplate restTemplate;
     private final ProductMapper productMapper;
 
-    private static final String PRODUCT_CATALOG_SERVICE_URL = "http://product-catalog-service/api/admin/products";
+    private static final String PRODUCT_CATALOG_SERVICE_URL = "http://product-catalog-service/management/products";
 
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long productId) {

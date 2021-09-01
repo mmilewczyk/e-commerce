@@ -43,7 +43,7 @@ public class CatalogProductService {
     @HystrixCommand(fallbackMethod = "getFallbackCatalogProductById")
     public ResponseEntity<Product> getCatalogProductById(Long productId){
         log.info("Fetching Product entity from PRODUCT INFO SERVICE");
-        return restTemplate.getForEntity("http://product-info-service/api/web/products/" + productId, Product.class);
+        return restTemplate.getForEntity("http://product-info-service/products-info" + productId, Product.class);
     }
 
     public ResponseEntity<Product> getFallbackCatalogProductById(Long productId){
@@ -73,11 +73,11 @@ public class CatalogProductService {
     }
 
     public void deleteProductById(Long productId) {
-        var product = restTemplate.getForObject("https://product-info-service/api/web/products/" + productId, Product.class);
+        var product = restTemplate.getForObject("https://product-info-service/products-info" + productId, Product.class);
         assert product != null;
         product.setCategories(new ArrayList<>());
-        restTemplate.put("https://product-info-service/api/web/products", product);
-        restTemplate.delete("https://product-info-service/api/web/products/" + productId);
+        restTemplate.put("https://product-info-service/management/products-info", product);
+        restTemplate.delete("https://product-info-service/management/products-info" + productId);
         catalogProductRepository.deleteById(productId);
     }
 }
