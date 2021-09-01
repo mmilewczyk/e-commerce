@@ -10,8 +10,9 @@ import com.milewczyk.orderservice.model.models_from_other_services.user_service.
 import com.milewczyk.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,9 +41,9 @@ public class OrderService {
     @Value("${order.configuration.allowedNumberOfHoursToDeleteAnOrder}")
     private Long allowedNumberOfHoursToDeleteAnOrder;
 
-    public List<OrderDTO> getPrincipalUserOrders(Pageable pageable) {
+    public Page<OrderDTO> getPrincipalUserOrders(Pageable pageable) {
         var orders = getOrdersOfPrincipalUser(pageable);
-        return mapOrdersToDTOs(orders);
+        return new PageImpl<>(mapOrdersToDTOs(orders));
     }
 
     private List<OrderDTO> mapOrdersToDTOs(List<Order> orders) {
@@ -60,16 +61,20 @@ public class OrderService {
     /**
      * @return new Order object
      */
-    public Order createNewOrder(Order order) {
+    public OrderDTO createNewOrder(Order order) {
         var cart = getCartOfPrincipalUser();
+        var user = getUserFromUserService();
 
+        order.setCartId(cart.getId());
+        order.setUserId(user.getId());
         order.setDateOfOrder(LocalDateTime.now());
         order.setTotalPrice(cart.getCartItems().stream()
                         .map(CartItem::getTotalPrice)
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
         log.info("User " + order.getUserId() + " created a new order " + order.getOrderId());
-        return orderRepository.save(order);
+        var newOrder = orderRepository.save(order);
+        return orderMapper.mapOrderToOrderDTO(newOrder, cart, user);
     }
 
     /**
@@ -77,15 +82,22 @@ public class OrderService {
      * @exception ResponseStatusException an exception will be thrown if allowed number of hours have passed since the order was placed
      */
     public void deleteOwnOrder(Long orderId) {
+        var user = getUserFromUserService();
         var order = orderRepository.findById(orderId).orElseThrow(() ->
                 new IllegalArgumentException("Order " + orderId + " does not exist!"));
-        if (order.getDateOfOrder().isBefore(order.getDateOfOrder().plusHours(allowedNumberOfHoursToDeleteAnOrder))) {
-            log.info("User " + order.getUserId() + " deleted order " + order.getOrderId());
-            orderRepository.deleteById(order.getOrderId());
+
+        // the condition checks if the authenticated user is the owner of the order.
+        if (order.getUserId().equals(user.getId())) {
+            if (order.getDateOfOrder().isBefore(order.getDateOfOrder().plusHours(allowedNumberOfHoursToDeleteAnOrder))) {
+                log.info("User " + order.getUserId() + " deleted order " + order.getOrderId());
+                orderRepository.deleteById(order.getOrderId());
+            } else {
+                log.error("User " + order.getUserId() + " failed to delete order: " + order.getOrderId());
+                throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+                        "The order could only be cancelled until:" + order.getDateOfOrder().plusHours(allowedNumberOfHoursToDeleteAnOrder));
+            }
         } else {
-            log.error("User " + order.getUserId() + " failed to delete order: " + order.getOrderId());
-            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-                    "The order could only be cancelled until:" + order.getDateOfOrder().plusHours(allowedNumberOfHoursToDeleteAnOrder));
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not the owner of order " + orderId);
         }
     }
 
