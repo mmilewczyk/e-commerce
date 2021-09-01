@@ -1,6 +1,5 @@
 package com.milewczyk.productcatalogservice.controller;
 
-import com.milewczyk.productcatalogservice.model.CatalogProduct;
 import com.milewczyk.productcatalogservice.model.Product;
 import com.milewczyk.productcatalogservice.model.dto.CatalogProductDTO;
 import com.milewczyk.productcatalogservice.service.CatalogProductService;
@@ -14,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping(produces = "application/json", path = "api/web/products")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
+@RequestMapping(produces = "application/json", path = "/products")
 public class CatalogProductWebController {
 
     private final CatalogProductService catalogProductService;

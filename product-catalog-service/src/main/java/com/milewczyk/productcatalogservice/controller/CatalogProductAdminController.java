@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping(produces = "application/json", path = "api/admin/products")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
+@RequestMapping(produces = "application/json", path = "/management/products")
 public class CatalogProductAdminController {
 
     private final CatalogProductService catalogProductService;

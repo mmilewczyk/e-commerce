@@ -8,6 +8,7 @@ import com.milewczyk.productcatalogservice.model.mapper.CatalogProductMapper;
 import com.milewczyk.productcatalogservice.repository.CatalogProductRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.status;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CatalogProductService {
@@ -40,10 +42,12 @@ public class CatalogProductService {
 
     @HystrixCommand(fallbackMethod = "getFallbackCatalogProductById")
     public ResponseEntity<Product> getCatalogProductById(Long productId){
+        log.info("Fetching Product entity from PRODUCT INFO SERVICE");
         return restTemplate.getForEntity("http://product-info-service/api/web/products/" + productId, Product.class);
     }
 
     public ResponseEntity<Product> getFallbackCatalogProductById(Long productId){
+        log.info("Returning fallback Product object");
         Optional<CatalogProduct> catalogProduct = catalogProductRepository.findById(productId);
         return catalogProduct.map(product -> status(HttpStatus.OK)
                 .body(new Product(productId, product.getName(), product.getBrandName(), 0.0, false, "Fallback", 0, Price.ZERO, new ArrayList<>())))
