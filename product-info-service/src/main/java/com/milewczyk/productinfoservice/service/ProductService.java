@@ -31,9 +31,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Product addNewProduct(Product product){
+    public ProductDTO addNewProduct(Product product){
         postProductToProductCatalogService(PRODUCT_CATALOG_SERVICE_URL, product);
-        return productRepository.save(product);
+        var newProduct = productRepository.save(product);
+        return productMapper.mapProductToDTO(newProduct);
     }
 
     @Transactional
@@ -43,7 +44,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(Product product){
+    public ProductDTO updateProduct(Product product){
         var editedProduct = productRepository.findById(product.getId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product cannot be found"));
         editedProduct.setName(product.getName());
@@ -52,11 +53,15 @@ public class ProductService {
         editedProduct.setAvaliable(product.getAvaliable());
         editedProduct.setDescription(product.getDescription());
         editedProduct.setPrice(product.getPrice());
-        return editedProduct;
+        return productMapper.mapProductToDTO(editedProduct);
     }
 
     @Transactional
     public void deleteProductById(Long productId) {
-        productRepository.deleteById(productId);
+        try {
+            productRepository.deleteById(productId);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Wrong id, product " + productId + " does not exist!", e);
+        }
     }
 }
