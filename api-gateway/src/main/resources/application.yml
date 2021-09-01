@@ -1,14 +1,32 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 spring:
   application:
     name: api-gateway
   profiles:
     active: production
+  session:
+    store-type: redis
+  redis:
+    host: localhost
+    port: 6379
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
+      default-filters:
+        # - TokenRelay
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10
+            redis-rate-limiter.burstCapacity: 20
+            redis-rate-limiter.requestedTokens: 1
 
 logging:
   level:
@@ -22,12 +40,6 @@ info:
     profile: ${spring.profiles.active}
   serverInfo:
     port: ${server.port}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 
 
 
