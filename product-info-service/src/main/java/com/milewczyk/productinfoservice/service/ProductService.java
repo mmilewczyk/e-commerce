@@ -6,12 +6,14 @@ import com.milewczyk.productinfoservice.model.dto.ProductDTO;
 import com.milewczyk.productinfoservice.model.mapper.ProductMapper;
 import com.milewczyk.productinfoservice.repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ProductService {
@@ -34,6 +36,7 @@ public class ProductService {
     public ProductDTO addNewProduct(Product product){
         postProductToProductCatalogService(PRODUCT_CATALOG_SERVICE_URL, product);
         var newProduct = productRepository.save(product);
+        log.info("Saving the product object from product-info-service to product-catalog-service");
         return productMapper.mapProductToDTO(newProduct);
     }
 
@@ -53,14 +56,17 @@ public class ProductService {
         editedProduct.setAvaliable(product.getAvaliable());
         editedProduct.setDescription(product.getDescription());
         editedProduct.setPrice(product.getPrice());
+        log.info("Updating the properties of product " + product.getId() + " in product-info-service");
         return productMapper.mapProductToDTO(editedProduct);
     }
 
     @Transactional
     public void deleteProductById(Long productId) {
         try {
+            log.info("Deleting the properties of product " + productId + " in product-info-service");
             productRepository.deleteById(productId);
         } catch (IllegalArgumentException e) {
+            log.error("An error occurred while removing the " + productId + " product.");
             throw new IllegalArgumentException("Wrong id, product " + productId + " does not exist!", e);
         }
     }
