@@ -7,6 +7,7 @@ import com.milewczyk.cartservice.model.models_from_other_services.userservice.Us
 import com.milewczyk.cartservice.repository.CartItemRepository;
 import com.milewczyk.cartservice.repository.CartRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.security.Principal;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CartService {
@@ -31,9 +33,9 @@ public class CartService {
     }
 
     private void mapCartItemsToGetInfo(Cart cart) {
-        for (CartItem item: cart.getCartItems()) {
+        for (CartItem item : cart.getCartItems()) {
             var product = restTemplate.getForEntity(
-                    "http://product-info-service/api/web/products/" + item.getProductId(),
+                    "http://product-info-service/products-info" + item.getProductId(),
                     Product.class).getBody();
 
             assert product != null;
@@ -53,19 +55,21 @@ public class CartService {
         } else {
             cart.getCartItems().add(cartItem);
         }
+        log.info("User " + cart.getUserId() + " added a new item " + cartItem.getProductId() + " to cart");
         return cart;
     }
 
-    public void removeItemFromCart(Long itemId){
+    public void removeItemFromCart(Long itemId) {
         var cart = getCartOfPrincepal();
         CartItem itemToRemove = cartItemRepository.findById(itemId).orElseThrow(
                 () -> new IllegalArgumentException("Product does not exist!"));
 
-        if (cart.getCartItems().contains(itemToRemove)){
+        if (cart.getCartItems().contains(itemToRemove)) {
             itemToRemove.setAmountOfProduct(itemToRemove.getAmountOfProduct() - 1);
         } else {
             cart.getCartItems().remove(itemToRemove);
         }
+        log.info("User " + cart.getUserId() + " removed item " + itemId + " from cart");
     }
 
     private Cart getCartOfPrincepal() {
