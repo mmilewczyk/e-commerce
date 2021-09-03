@@ -12,3 +12,11 @@ spring:
 server:
   port: 8888
 
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+

@@ -1,10 +1,17 @@
 management:
+  security:
+    enabled: false
   endpoints:
     web:
       exposure:
         include: "*"
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: ecommerce
   application:
     name: api-gateway
   profiles:
@@ -40,6 +47,5 @@ info:
     profile: ${spring.profiles.active}
   serverInfo:
     port: ${server.port}
-
 
 
