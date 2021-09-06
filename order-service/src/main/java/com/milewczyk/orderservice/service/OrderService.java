@@ -5,9 +5,11 @@ import com.milewczyk.orderservice.model.Order;
 import com.milewczyk.orderservice.model.dto.OrderDTO;
 import com.milewczyk.orderservice.model.models_from_other_services.cart_service.Cart;
 import com.milewczyk.orderservice.model.models_from_other_services.cart_service.CartItem;
+import com.milewczyk.orderservice.model.models_from_other_services.user_service.GENDER;
 import com.milewczyk.orderservice.model.models_from_other_services.user_service.USER_ROLE;
 import com.milewczyk.orderservice.model.models_from_other_services.user_service.User;
 import com.milewczyk.orderservice.repository.OrderRepository;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -64,6 +67,10 @@ public class OrderService {
     public OrderDTO createNewOrder(Order order) {
         var cart = getCartOfPrincipalUser();
         var user = getUserFromUserService();
+
+        if (!user.equals(principal) || cart.getUserId().equals("Fallback")){
+            throw new IllegalArgumentException("You can't create order during Fallback");
+        }
 
         order.setCartId(cart.getId());
         order.setUserId(user.getId());
@@ -108,6 +115,7 @@ public class OrderService {
      */
     public void deleteOrderByUserId(Long orderId) {
         var user = getUserFromUserService();
+
         if(user.getRole().contains(USER_ROLE.ROLE_MODERATOR)) {
             log.info("Moderator " + user.getId() + " deleted order " + orderId);
             orderRepository.deleteById(orderId);
@@ -122,9 +130,15 @@ public class OrderService {
      *
      * @return Object of the Principal user
      */
+    @HystrixCommand(fallbackMethod = "getFallbackUserFromUserService")
     private User getUserFromUserService() {
         return restTemplate.getForObject("http://user-service/" +
                 principal.getName(), User.class);
+    }
+
+    public User getFallbackUserFromUserService() {
+        return new User("fallbackId", "fallbackUsername", "fallbackEmail", "fallbackPassword",
+                new ArrayList<>(), GENDER.OTHER, null, 0L);
     }
 
     private List<Order> getOrdersOfPrincipalUser(Pageable pageable) {
@@ -133,7 +147,12 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("You are not authenticated, login!"));
     }
 
+    @HystrixCommand(fallbackMethod = "getFallbackCartOfPrincipalUser")
     private Cart getCartOfPrincipalUser() {
         return restTemplate.getForObject("http://cart-service/cart", Cart.class);
+    }
+
+    public Cart getFallbackCartOfPrincipalUser() {
+        return new Cart(0L, "Fallback", new HashSet<>());
     }
 }

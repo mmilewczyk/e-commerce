@@ -18,7 +18,8 @@ public class User {
     private Long cartId;
     private boolean isActive;
 
-    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, Long cartId) {
+    public User(String id, String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, Long cartId) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
