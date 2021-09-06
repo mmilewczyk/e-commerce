@@ -51,11 +51,11 @@ public class User {
     private Address address;
 
     @NotBlank
-    private String cartId;
+    private Long cartId;
 
     private boolean isActive;
 
-    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, String cartId) {
+    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, Long cartId) {
         this.username = username;
         this.email = email;
         this.password = password;

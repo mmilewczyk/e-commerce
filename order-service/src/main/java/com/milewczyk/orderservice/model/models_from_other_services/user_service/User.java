@@ -15,10 +15,10 @@ public class User {
     private List<USER_ROLE> role;
     private GENDER gender;
     private Address address;
-    private String cartId;
+    private Long cartId;
     private boolean isActive;
 
-    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, String cartId) {
+    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, Long cartId) {
         this.username = username;
         this.email = email;
         this.password = password;

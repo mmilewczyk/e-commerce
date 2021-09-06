@@ -20,6 +20,6 @@ public class User {
         private List<USER_ROLE> role;
         private GENDER gender;
         private Address address;
-        private String cartId;
+        private Long cartId;
         private boolean isActive;
 }
