@@ -1,7 +1,7 @@
 package com.milewczyk.cartservice.controller;
 
-import com.milewczyk.cartservice.model.Cart;
 import com.milewczyk.cartservice.model.CartItem;
+import com.milewczyk.cartservice.model.dto.CartDTO;
 import com.milewczyk.cartservice.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,12 +17,12 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping("/cart")
-    public ResponseEntity<Cart> getPrincipalCart(){
+    public ResponseEntity<CartDTO> getPrincipalCart(){
         return status(HttpStatus.OK).body(cartService.getCart());
     }
 
     @PostMapping("/")
-    public ResponseEntity<Cart> addItemToCart(@RequestBody CartItem cartItem) {
+    public ResponseEntity<CartDTO> addItemToCart(@RequestBody CartItem cartItem) {
         return status(HttpStatus.CREATED).body(cartService.addItemToCart(cartItem));
     }
 

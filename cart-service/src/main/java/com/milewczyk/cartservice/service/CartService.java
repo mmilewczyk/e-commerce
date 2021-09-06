@@ -1,11 +1,14 @@
 package com.milewczyk.cartservice.service;
 
-import com.milewczyk.cartservice.model.Cart;
+import com.milewczyk.cartservice.mapper.CartMapper;
 import com.milewczyk.cartservice.model.CartItem;
+import com.milewczyk.cartservice.model.dto.CartDTO;
 import com.milewczyk.cartservice.model.models_from_other_services.productinfoservice.Product;
+import com.milewczyk.cartservice.model.models_from_other_services.userservice.GENDER;
 import com.milewczyk.cartservice.model.models_from_other_services.userservice.User;
 import com.milewczyk.cartservice.repository.CartItemRepository;
 import com.milewczyk.cartservice.repository.CartRepository;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -24,15 +28,16 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final RestTemplate restTemplate;
     private final Principal principal;
+    private final CartMapper cartMapper;
 
     @Transactional
-    public Cart getCart() {
+    public CartDTO getCart() {
         var cart = getCartOfPrincepal();
         mapCartItemsToGetInfo(cart);
         return cart;
     }
 
-    private void mapCartItemsToGetInfo(Cart cart) {
+    private void mapCartItemsToGetInfo(CartDTO cart) {
         for (CartItem item : cart.getCartItems()) {
             var product = restTemplate.getForEntity(
                     "http://product-info-service/products-info" + item.getProductId(),
@@ -47,7 +52,7 @@ public class CartService {
         }
     }
 
-    public Cart addItemToCart(CartItem cartItem) {
+    public CartDTO addItemToCart(CartItem cartItem) {
         var cart = getCartOfPrincepal();
 
         if (cart.getCartItems().contains(cartItem)) {
@@ -72,14 +77,22 @@ public class CartService {
         log.info("User " + cart.getUserId() + " removed item " + itemId + " from cart");
     }
 
-    private Cart getCartOfPrincepal() {
+    private CartDTO getCartOfPrincepal() {
         var user = getUserFromUserService();
         assert user != null;
-        return cartRepository.findByUserId(user.getId()).orElseThrow(
+        var cart = cartRepository.findByUserId(user.getId()).orElseThrow(
                 () -> new IllegalArgumentException("User does not exist!"));
+
+        return cartMapper.mapCartToCartDTO(cart, user);
     }
 
+    @HystrixCommand(fallbackMethod = "getFallbackUserFromUserService")
     private User getUserFromUserService() {
         return restTemplate.getForObject("http://user-service/" + principal.getName(), User.class);
+    }
+
+    public User getFallbackUserFromUserService() {
+        return new User("fallbackId", "fallbackUsername", "fallbackEmail", "fallbackPassword",
+                new ArrayList<>(), GENDER.OTHER, null, 0L, false);
     }
 }

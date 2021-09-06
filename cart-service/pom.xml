@@ -60,6 +60,13 @@
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
+        <!--HYSTRIX CIRCUIT BREAKER-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+            <version>2.2.9.RELEASE</version>
+        </dependency>
+
         <!--SPRING CLOUD CONFIG-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
