@@ -1,30 +1,26 @@
 package com.milewczyk.userservice.model;
 
-import com.milewczyk.userservice.enums.GENDER;
-import com.milewczyk.userservice.enums.USER_ROLE;
+import com.milewczyk.userservice.enums.Gender;
+import com.milewczyk.userservice.enums.User_role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(collection = "users")
+@Entity
+@Table(name = "Users")
 public class User {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotBlank
     @Size(max = 20)
@@ -33,7 +29,6 @@ public class User {
     @NotBlank
     @Size(max = 50)
     @Email
-    @Indexed(unique = true)
     private String email;
 
     @NotBlank
@@ -41,13 +36,14 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @DBRef
-    private List<USER_ROLE> role;
+    private User_role role;
 
     @NotBlank
-    private GENDER gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @NotBlank
+    @Embedded
     private Address address;
 
     @NotBlank
@@ -55,7 +51,7 @@ public class User {
 
     private boolean isActive;
 
-    public User(String username, String email, String password, List<USER_ROLE> role, GENDER gender, Address address, Long cartId) {
+    public User(String username, String email, String password, User_role role, Gender gender, Address address, Long cartId) {
         this.username = username;
         this.email = email;
         this.password = password;
